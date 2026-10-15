@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>كل سنة وأنتي طيبة يا قلبي ❤️ | لعبة صيد القلوب</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rosepink: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            400: '#fb7185',
+                            600: '#e11d48',
+                            800: '#9f1239',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        kufi: ['Reem Kufi', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 50%, #f78ca0 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Floating Background Particles */
+        .bg-particle {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(0.3) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Canvas element responsiveness */
+        #gameCanvas {
+            touch-action: none;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 15px 35px rgba(190, 18, 57, 0.25);
+        }
+
+        /* Glow animation */
+        .glow-btn {
+            box-shadow: 0 0 20px rgba(225, 29, 72, 0.6);
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(225, 29, 72, 0.6), 0 0 10px rgba(255, 255, 255, 0.8);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(225, 29, 72, 0.9), 0 0 20px rgba(255, 255, 255, 1);
+                transform: scale(1.03);
+            }
+        }
+
+        /* Custom Scrollbar for Modal content */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background-color: #fb7185;
+            border-radius: 10px;
+        }
+
+        .heart-sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: popAndFade 0.8s ease-out forwards;
+        }
+
+        @keyframes popAndFade {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            50% { transform: translate(-50%, -80%) scale(1.4); opacity: 0.8; }
+            100% { transform: translate(-50%, -120%) scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-3 md:p-6 relative overflow-hidden text-slate-800 select-none">
+
+    <!-- Floating Background Floating Hearts Layer -->
+    <div id="bgHeartsContainer" class="absolute inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-lg z-10 relative flex flex-col items-center justify-center">
+
+        <!-- ==================== STAGE 1: WELCOME CARD ==================== -->
+        <div id="welcomeStage" class="w-full bg-white/90 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-white/60 text-center transition-all duration-500 transform hover:scale-[1.01]">
+            
+            <div class="relative w-24 h-24 mx-auto mb-4">
+                <div class="absolute inset-0 bg-rose-400 rounded-full blur-lg opacity-40 animate-pulse"></div>
+                <div class="relative w-full h-full bg-gradient-to-tr from-rose-500 to-pink-400 rounded-full flex items-center justify-center text-white text-4xl shadow-xl border-2 border-white">
+                    <i class="fa-solid fa-heart animate-bounce"></i>
+                </div>
+            </div>
+
+            <h1 class="font-kufi text-3xl md:text-4xl font-bold text-rose-700 mb-2 leading-tight">
+                كل سنة وأنتي طيبة يا حُبي! ❤️
+            </h1>
+            
+            <span class="inline-block px-4 py-1.5 bg-rose-100 text-rose-700 font-bold rounded-full text-sm mb-4 border border-rose-200">
+                ✨ أجمل يوم في السنة ✨
+            </span>
+
+            <p class="text-slate-700 text-base md:text-lg leading-relaxed mb-6 font-medium">
+                رغم كل المشاكل و البعد والشاشات اللي بينّا، حضورك في قلبي أقوى من أي مسافة. حبيت أعملك مفاجأة خاصة جداً على طريقتي ! 
+                <br>
+                جهّزتلك لعبة صغيرة.. لمّي فيها القلوب عشان تفتحي رسالتك والمفاجأة الكبرى! 🎁✨
+            </p>
+
+            <button onclick="startGame()" class="glow-btn w-full py-4 px-6 bg-gradient-to-r from-rose-600 via-pink-600 to-rose-500 text-white font-bold text-lg md:text-xl rounded-2xl shadow-lg flex items-center justify-center gap-3 hover:opacity-95 transition-all">
+                <i class="fa-solid fa-gamepad text-2xl"></i>
+                <span>ابدأي صيد القلوب للمفاجأة 🎮❤️</span>
+            </button>
+        </div>
+
+        <!-- ==================== STAGE 2: GAME SCREEN ==================== -->
+        <div id="gameStage" class="w-full hidden flex-col items-center justify-center">
+            
+            <!-- HUD / Header -->
+            <div class="w-full bg-white/90 backdrop-blur-md rounded-2xl p-4 mb-3 shadow-lg border border-white/60 flex items-center justify-between">
+                
+                <!-- Score Indicator -->
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center text-rose-600 text-xl font-bold">
+                        ❤️
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-semibold">القلوب المجمّعة</div>
+                        <div class="text-xl font-black text-rose-700"><span id="scoreText">0</span> / 15</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-1/3 bg-slate-200 h-4 rounded-full overflow-hidden p-0.5 border border-slate-300">
+                    <div id="progressBar" class="bg-gradient-to-r from-pink-500 to-rose-600 h-full rounded-full transition-all duration-300 w-0"></div>
+                </div>
+
+                <!-- Pause / Restart button -->
+                <button onclick="resetGame()" class="w-10 h-10 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center text-lg font-bold transition-colors">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-3xl overflow-hidden shadow-2xl">
+                <canvas id="gameCanvas" class="w-full h-full block rounded-3xl"></canvas>
+
+                <!-- Touch Control Overlay Hints for Mobile -->
+                <div id="touchHint" class="absolute bottom-4 left-0 right-0 text-center text-white/80 text-xs font-bold pointer-events-none bg-black/20 py-1.5 backdrop-blur-sm">
+                    👈 اسحبي لليمن واليسار للتحريك بالسلة 👉
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== STAGE 3: WIN & SURPRISE MODAL ==================== -->
+        <div id="winModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+            
+            <div class="bg-white/95 rounded-3xl max-w-md w-full p-6 md:p-8 text-center shadow-2xl border-2 border-rose-200 transform transition-all scale-95 opacity-0 animate-popIn relative overflow-hidden max-h-[90vh] flex flex-col">
+                
+                <!-- Confetti Effect Layer Placeholder -->
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-300/30 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-pink-300/30 rounded-full blur-2xl"></div>
+
+                <div class="relative z-10 overflow-y-auto modal-body px-1">
+                    
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-tr from-amber-400 to-rose-500 rounded-full flex items-center justify-center text-white text-4xl shadow-lg border-4 border-white animate-bounce">
+                        👑
+                    </div>
+
+                    <h2 class="font-kufi text-3xl font-bold text-rose-700 mb-1">
+                        مبروك يا أرق إنسانة! 🎉
+                    </h2>
+                    
+                    <p class="text-rose-500 font-bold text-sm mb-4">
+                        جمعتِ كل القلوب بنجاح 100%! 💕
+                    </p>
+
+                    <!-- Message Container -->
+                    <div class="bg-rose-50/80 rounded-2xl p-5 border border-rose-200 text-right text-slate-700 space-y-3 mb-6 shadow-inner text-sm md:text-base leading-relaxed">
+                        <p class="font-bold text-rose-800 text-base border-b border-rose-200 pb-2 flex items-center gap-2">
+                            <span>💌</span> رسالة من أعماق قلبي:
+                        </p>
+                        <p>
+                            كل سنة وأنتي ضحكة حياتي وأحلى وأجمل حاجة حصلتلي. المسافات والأميال الشاسعة بينّا عمرها ما قِدرت تقلل من مشاعري أو تخليني أحس ببعدك.
+                        </p>
+                        <p>
+                            أنتي مش بس حبيبتي، أنتِ نوري الصغير اللي بيبيّنلي جمال الأيام. شكراً إنك موجودة وشكراً لكل لحظة وضحكة بنشاركها سوا عبر الشاشة.
+                        </p>
+                        <p class="font-bold text-rose-700 pt-1">
+                            ✨ ووعد مني: السنة الجاية هنكون سوا ونحتفل مع بعض إيد بإيد، وبدل القلوب اللي على الشاشة هنحتفل على أرض الواقع! ❤️
+                        </p>
+                    </div>
+
+                    <!-- Interactive Actions -->
+                    <div class="space-y-3">
+                        <button onclick="playSparklesSound(); triggerExtraHearts();" class="w-full py-3 px-4 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                            <span>إطلاق انفجار القلوب ❤️✨</span>
+                        </button>
+                        
+                        <button onclick="replayGame()" class="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span>إعادة اللعب من جديد 🔄</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        /* ==========================================
+           BACKGROUND FLOATING PARTICLES
+           ========================================== */
+        function initBackgroundParticles() {
+            const container = document.getElementById('bgHeartsContainer');
+            const hearts = ['❤️', '💖', '🌸', '✨', '💕', '🌹'];
+            const count = 18;
+
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'bg-particle';
+                particle.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${4 + Math.random() * 6}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.fontSize = `${16 + Math.random() * 20}px`;
+                container.appendChild(particle);
+            }
+        }
+
+        /* ==========================================
+           AUDIO EFFECTS (SYNTHESIZED VIA WEB AUDIO API)
+           ========================================== */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCatchSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+            
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        function playWinSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+            notes.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime + i * 0.12);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.12 + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + i * 0.12);
+                osc.stop(audioCtx.currentTime + i * 0.12 + 0.3);
+            });
+        }
+
+        function playSparklesSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = 600 + Math.random() * 800;
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                }, i * 60);
+            }
+        }
+
+        /* ==========================================
+           GAME ENGINE & CANVAS LOGIC
+           ========================================== */
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let score = 0;
+        const TARGET_SCORE = 15;
+        let isGameRunning = false;
+        let animationFrameId = null;
+
+        // Basket / Catcher setup
+        const basket = {
+            x: 0,
+            y: 0,
+            width: 80,
+            height: 45,
+            emoji: '🧺'
+        };
+
+        // Falling items array
+        let items = [];
+        const itemTypes = [
+            { symbol: '❤️', points: 1, speedMult: 1 },
+            { symbol: '💖', points: 1, speedMult: 1.1 },
+            { symbol: '💕', points: 1, speedMult: 0.9 },
+            { symbol: '🎁', points: 2, speedMult: 1.2 },
+            { symbol: '🌟', points: 1, speedMult: 1.3 }
+        ];
+
+        let lastSpawnTime = 0;
+        const spawnInterval = 650; // ms between item spawns
+
+        // Resize Canvas dynamically
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            basket.width = Math.max(70, canvas.width * 0.22);
+            basket.height = basket.width * 0.55;
+            basket.y = canvas.height - basket.height - 15;
+            if (basket.x === 0 || basket.x > canvas.width - basket.width) {
+                basket.x = (canvas.width - basket.width) / 2;
+            }
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        /* ==========================================
+           CONTROLS (TOUCH & MOUSE & KEYBOARD)
+           ========================================== */
+        let isDragging = false;
+
+        function handlePointerMove(clientX) {
+            const rect = canvas.getBoundingClientRect();
+            const touchX = clientX - rect.left;
+            basket.x = touchX - basket.width / 2;
+
+            // Clamp basket inside bounds
+            if (basket.x < 0) basket.x = 0;
+            if (basket.x + basket.width > canvas.width) basket.x = canvas.width - basket.width;
+        }
+
+        // Touch events
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            if (e.touches.length > 0) handlePointerMove(e.touches[0].clientX);
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (isDragging && e.touches.length > 0) handlePointerMove(e.touches[0].clientX);
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => { isDragging = false; });
+
+        // Mouse events
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            handlePointerMove(e.clientX);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) handlePointerMove(e.clientX);
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        // Keyboard arrow keys controls
+        window.addEventListener('keydown', (e) => {
+            if (!isGameRunning) return;
+            const step = 25;
+            if (e.key === 'ArrowRight' || e.key === 'd') {
+                basket.x = Math.min(canvas.width - basket.width, basket.x + step);
+            } else if (e.key === 'ArrowLeft' || e.key === 'a') {
+                basket.x = Math.max(0, basket.x - step);
+            }
+        });
+
+        /* ==========================================
+           SPAWN & UPDATE ITEMS
+           ========================================== */
+        function spawnItem() {
+            const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+            const size = 32 + Math.random() * 10;
+            items.push({
+                x: Math.random() * (canvas.width - size - 10) + 5,
+                y: -size,
+                size: size,
+                speed: (2.5 + Math.random() * 2) * type.speedMult,
+                symbol: type.symbol,
+                points: type.points,
+                rotation: Math.random() * Math.PI,
+                rotSpeed: (Math.random() - 0.5) * 0.05
+            });
+        }
+
+        // Trigger Pop Sparkle visual on catch
+        function createPopParticle(x, y, symbol) {
+            const particle = document.createElement('div');
+            particle.className = 'heart-sparkle font-bold text-rose-600 text-2xl';
+            particle.innerText = symbol;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            document.body.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 800);
+        }
+
+        /* ==========================================
+           MAIN GAME LOOP
+           ========================================== */
+        function gameLoop(timestamp) {
+            if (!isGameRunning) return;
+
+            // Clear Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Spawn Items periodically
+            if (timestamp - lastSpawnTime > spawnInterval) {
+                spawnItem();
+                lastSpawnTime = timestamp;
+            }
+
+            // Draw Basket / Cloud Catcher
+            ctx.shadowColor = 'rgba(225, 29, 72, 0.3)';
+            ctx.shadowBlur = 10;
+            ctx.font = `${basket.height}px Cairo, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🧺', basket.x + basket.width / 2, basket.y + basket.height / 2);
+            ctx.shadowBlur = 0; // Reset shadow
+
+            // Update & Draw Falling Items
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
+                item.y += item.speed;
+                item.rotation += item.rotSpeed;
+
+                // Draw Item with Rotation
+                ctx.save();
+                ctx.translate(item.x + item.size / 2, item.y + item.size / 2);
+                ctx.rotate(item.rotation);
+                ctx.font = `${item.size}px Cairo, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(item.symbol, 0, 0);
+                ctx.restore();
+
+                // Collision Detection with Basket
+                if (
+                    item.y + item.size >= basket.y + 5 &&
+                    item.y <= basket.y + basket.height &&
+                    item.x + item.size >= basket.x &&
+                    item.x <= basket.x + basket.width
+                ) {
+                    // Item Caught!
+                    score += item.points;
+                    playCatchSound();
+
+                    // Canvas to Screen coordinate conversion for pop effect
+                    const canvasRect = canvas.getBoundingClientRect();
+                    createPopParticle(canvasRect.left + item.x, canvasRect.top + item.y, '+1 ❤️');
+
+                    // Update Score UI
+                    updateScoreUI();
+
+                    // Remove caught item
+                    items.splice(i, 1);
+
+                    // Check Win Condition
+                    if (score >= TARGET_SCORE) {
+                        triggerWin();
+                        return;
+                    }
+                    continue;
+                }
+
+                // Remove offscreen items
+                if (item.y > canvas.height + 40) {
+                    items.splice(i, 1);
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        /* ==========================================
+           UI UPDATE & STAGE TRANSITIONS
+           ========================================== */
+        function updateScoreUI() {
+            document.getElementById('scoreText').innerText = score;
+            const progressPct = Math.min(100, (score / TARGET_SCORE) * 100);
+            document.getElementById('progressBar').style.width = `${progressPct}%`;
+        }
+
+        function startGame() {
+            document.getElementById('welcomeStage').classList.add('hidden');
+            const gameStage = document.getElementById('gameStage');
+            gameStage.classList.remove('hidden');
+            gameStage.classList.add('flex');
+
+            resizeCanvas();
+            score = 0;
+            items = [];
+            updateScoreUI();
+            isGameRunning = true;
+            lastSpawnTime = performance.now();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function resetGame() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            score = 0;
+            items = [];
+            updateScoreUI();
+            isGameRunning = true;
+            lastSpawnTime = performance.now();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function triggerWin() {
+            isGameRunning = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+            playWinSound();
+
+            // Show Win Modal
+            const winModal = document.getElementById('winModal');
+            winModal.classList.remove('hidden');
+            setTimeout(() => {
+                winModal.children[0].classList.remove('scale-95', 'opacity-0');
+                winModal.children[0].classList.add('scale-100', 'opacity-100');
+            }, 50);
+
+            // Trigger Confetti / Heart Explosion
+            triggerExtraHearts();
+        }
+
+        function replayGame() {
+            const winModal = document.getElementById('winModal');
+            winModal.children[0].classList.remove('scale-100', 'opacity-100');
+            winModal.children[0].classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                winModal.classList.add('hidden');
+                resetGame();
+            }, 300);
+        }
+
+        function triggerExtraHearts() {
+            const hearts = ['❤️', '💖', '💕', '🎉', '🌟', '🌹', '✨'];
+            for (let i = 0; i < 35; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * (window.innerHeight * 0.7);
+                    const symbol = hearts[Math.floor(Math.random() * hearts.length)];
+                    createPopParticle(x, y, symbol);
+                }, i * 40);
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initBackgroundParticles();
+        };
+    </script>
+</body>
+</html>
